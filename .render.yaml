@@ -1,7 +1,7 @@
 services:
   - type: web
-    name: bitrix-handler
+    name: bitrix-scripts
     env: docker
     plan: free
-    branch: main
-    dockerfilePath: Dockerfile
+    dockerfilePath: ./Dockerfile
+    region: frankfurt

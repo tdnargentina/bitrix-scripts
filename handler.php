@@ -22,8 +22,4 @@ $url = "https://laempresa.bitrix24.es/rest/1/luufo23s7kq9k433/task.item.add.json
 
 // Запускаем ЮРЛ
 file_get_contents ($url);
-
-
-
-
 ?>

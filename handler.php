@@ -2,6 +2,10 @@
 // Получае данные сделки
 $dealdata = $_POST ["data"]["FIELDS"]["ID"];
 
+$file = "test.txt";
+file_put_contents ($file,$dealdata.PHP_EOL);
+
+
 // получаем данные сделки с аккаунта 1
 
 $urlDealGet = "https://laempresa.bitrix24.es/rest/1/a9wyp5ll5h14nuzm/crm.deal.get.json?ID=$dealdata";
@@ -10,6 +14,9 @@ $dealJS = json_decode($dealdata, true);
 
 $title = $dealJS["result"]["TITLE"];
 $listaABC = $dealJS ["result"]["UF_CRM_1684250117415"];
+
+file_put_contents ($file, $title.PHP_EOL, FILE_APPEND);
+file_put_contents ($file, $listaABC.PHP_EOL, FILE_APPEND);
 
 switch ($listaABC){
 	case 1701:
@@ -22,6 +29,8 @@ switch ($listaABC){
 	$listaABC = 49;
 	break;
 }
+
+file_put_contents ($file, $listaABC.PHP_EOL, FILE_APPEND);
 
 // Создаем сделку на Энт
 

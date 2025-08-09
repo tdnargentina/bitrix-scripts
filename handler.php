@@ -1,10 +1,8 @@
 <?php
-$title = "создание сделки говорит о том что обработчик работает";
+$leadID = $_GET['lead_id'] ?? null;
 
-$url = "https://b24-2txbup.bitrix24.com/rest/1/vx7xsiaqsq61bumx/crm.deal.add?"
-. "fields[TITLE]=" . urlencode ($title);
-
-file_get_contents ($url);
-
+$url = "https://enterprisesubscription.bitrix24.com/rest/17/ej33x1qpsr6kxpry/crm.lead.add.json?"
+. "fields[TITLE]=". urlencode($leadID);
 ?>
+
 

@@ -2,7 +2,7 @@
 $leadID = $_GET['lead_id'] ?? null;
 
 
-$leadGet = "https://laempresa.bitrix24.es/rest/1/l0fvjh738yy1v0qk/"
+$leadGet = "https://laempresa.bitrix24.es/rest/1/l0fvjh738yy1v0qk/crm.lead.get.json?"
 . "fields[ID]=" . urlencode($leadID);
 
 $leadgetRun = file_get_contents ($leadGet);
@@ -16,6 +16,7 @@ $urlleadCreate = "https://enterprisesubscription.bitrix24.com/rest/17/ej33x1qpsr
 
 file_get_contents ($url);
 ?>
+
 
 
 

@@ -14,7 +14,7 @@ $leadgetRun = file_get_contents ($leadGet);
 $jsDataLead = json_decode ($leadgetRun,true);
 $country = $jsDataLead["result"]["UF_CRM_1687251842328"]; // получили значение страны
 $title = $jsDataLead["result"]["TITLE"]; // получили название лида
-$mail = $decodeResult ["result"]["EMAIL"][0]["VALUE"]; // получаем рабочую почту
+$mail = $jsDataLead ["result"]["EMAIL"][0]["VALUE"]; // получаем рабочую почту
 
 // в switch меняем id значение полей чтобы в новомм аккаунте появилось нужное значение 
 switch($country){
@@ -41,7 +41,6 @@ $urlleadCreate = "https://enterprisesubscription.bitrix24.com/rest/17/ej33x1qpsr
 
 file_get_contents ($urlleadCreate);
 ?>
-
 
 
 

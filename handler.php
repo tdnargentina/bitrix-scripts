@@ -2,7 +2,7 @@
 <?php
 
 // получааем данные id того лида который хотим передать
-$laEmpresaLeadID =//$_GET ["lead_id"] ?? null;
+$laEmpresaLeadID =$_GET ["lead_id"] ?? null;
 // создаем хапрос на получания данных по id лида
 $urlLeadGet = "https://laempresa.bitrix24.es/rest/1/l0fvjh738yy1v0qk/crm.lead.get.json?"
 ."id=". urlencode($laEmpresaLeadID);
@@ -21,6 +21,7 @@ $entLeadAdd = "https://enterprisesubscription.bitrix24.com/rest/17/ej33x1qpsr6kx
 
 $result = file_get_contents($entLeadAdd);
 ?>
+
 
 
 

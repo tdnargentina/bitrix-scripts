@@ -17,11 +17,12 @@ $mail = $decodeResult ["result"] ["EMAIL"]["TYPE_ID"];
 
 $entLeadAdd = "https://enterprisesubscription.bitrix24.com/rest/17/ej33x1qpsr6kxpry/crm.lead.add.json?"
 ."fields[TITLE]=" .urlencode ($title)
-."fields[EMAIL]=" .urlencode ($mail);
+."&fields[EMAIL]=" .urlencode ($mail);
 
 $result = file_get_contents($entLeadAdd);
 
 ?>
+
 
 
 

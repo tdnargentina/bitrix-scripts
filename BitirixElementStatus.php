@@ -1,12 +1,9 @@
-
 <?php
-
 
 // Настройки подключения к Bitrix24 
 $BitrixDomain = "laempresa.bitrix24.es";
 $token = "1/l0fvjh738yy1v0qk";
 $dealID = 2417;
-
 
 // Собираем параметры запроса (что будем отправлять в Bitrix24)
 $params = [

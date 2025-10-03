@@ -82,3 +82,4 @@ switch ($status){
 echo "Название сделки: " . $title ."<br>";
 echo "Страна: " . $pais ."<br>";
 echo "Стадия сделки: " . $status ."<br>";
+?>

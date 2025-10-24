@@ -1,7 +1,7 @@
 
 <?php
 // Получаем данные на LaEmpresa
-$dealID = $_GET["deal_id"] ?? null; // ID сделки, которую будем передавать
+$dealID = $_GET['deal_id'] ?? null; // ID сделки, которую будем передавать
 $domain = "laempresa.bitrix24.es";  // домен твоего портала Bitrix24
 $webhook = "1/l0fvjh738yy1v0qk";    // часть вебхука (ключ авторизации)
 
@@ -68,6 +68,7 @@ echo "</pre>";
 
 
 ?>
+
 
 
 

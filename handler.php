@@ -6,7 +6,7 @@ $domain = "laempresa.bitrix24.es";  // домен твоего портала Bi
 $webhook = "1/l0fvjh738yy1v0qk";    // часть вебхука (ключ авторизации)
 
 
-$urlGet = "http://{$domain}/rest/{$webhook}/crm.deal.get.json?id={$dealID}";
+$urlGet = "https://{$domain}/rest/{$webhook}/crm.deal.get.json?id={$dealID}";
 
 $zaprosGet = file_get_contents($urlGet);
 $jsonDecodeGet = json_decode ($zaprosGet, true);
@@ -18,10 +18,6 @@ $pais = $jsonDecodeGet ["result"]["UF_CRM_649AF1D374E3B"];
 switch ($pais){
 	case 1729:
 	$pais = 89;
-	break;
-	
-	case 1731:
-	$pais = 91;
 	break;
 	
 	case 1731:
@@ -48,7 +44,7 @@ $fields = [
 ]
 ];
 
-$urlAdd = "http://{$domainENT}/rest/{$webhookENT}/crm.deal.add.json";
+$urlAdd = "https://{$domainENT}/rest/{$webhookENT}/crm.deal.add.json";
 
 $paramsENT = [
 "http" =>[
@@ -66,8 +62,8 @@ echo "<pre>";
 print_r ($jsDecodeEnt);
 echo "</pre>";
 
-
 ?>
+
 
 
 

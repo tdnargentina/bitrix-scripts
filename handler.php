@@ -1,79 +1,74 @@
 
 <?php
-$BitrixDomain = "laempresa.bitrix24.es";
-$token = "1/l0fvjh738yy1v0qk"; // твой REST-хук
+// Получаем данные на LaEmpresa
+$dealID = $_GET["deal_id"] ?? null; // ID сделки, которую будем передавать
+$domain = "laempresa.bitrix24.es";  // домен твоего портала Bitrix24
+$webhook = "1/l0fvjh738yy1v0qk";    // часть вебхука (ключ авторизации)
 
-// =============================
-// Сопоставление "секретный токен → deal_id"
-$clients = [
-    "abc123" => 2407, // клиент 1
-    "xyz789" => 2417 // клиент 2
- 
-];
-// =============================
 
-// Берём токен из URL
-$userToken = $_GET['key'] ?? '';
+$urlGet = "http://{$domain}/rest/{$webhook}/crm.deal.get.json?id={$dealID}";
 
-// Проверяем, есть ли такой токен
-if (!isset($clients[$userToken])) {
-    die("Доступ запрещён");
+$zaprosGet = file_get_contents($urlGet);
+$jsonDecodeGet = json_decode ($zaprosGet, true);
+
+$title = $jsonDecodeGet ["result"]["TITLE"];
+$pais = $jsonDecodeGet ["result"]["UF_CRM_649AF1D374E3B"];
+
+// Меняем ID значений поля в Свич
+switch ($pais){
+	case 1729:
+	$pais = 89;
+	break;
+	
+	case 1731:
+	$pais = 91;
+	break;
+	
+	case 1731:
+	$pais = 91;
+	break;
+	
+	case 1733:
+	$pais = 93;
+	break;
+	
+	case 1735:
+	$pais = 95;
+	break;
 }
+//Использеум данные в enterprise
 
+$domainENT = "enterprisesubscription.bitrix24.com";  // домен твоего портала Bitrix24
+$webhookENT = "17/ej33x1qpsr6kxpry";    // часть вебхука (ключ авторизации)
 
-// Определяем ID сделки
-$dealID = $clients[$userToken];
-
-// Параметры запроса
-$params = [
-    "id" => $dealID,
+$fields = [
+"fields" => [
+  "TITLE" => $title,
+  "UF_CRM_68FB3DBAC1C09" => $pais
+]
 ];
 
-// Адрес метода Bitrix24
-$url = "https://{$BitrixDomain}/rest/{$token}/crm.deal.get.json";
+$urlAdd = "http://{$domainENT}/rest/{$webhookENT}/crm.deal.add.json";
 
-$settings = [
-    "http" => [
-        "method" => "POST",
-        "header" => "Content-Type: application/x-www-form-urlencoded",
-        "content" => http_build_query($params)
-    ]
+$paramsENT = [
+"http" =>[
+"method" => "POST",
+"header"=> "Content-Type: application/x-www-form-urlencoded",
+"content" => http_build_query ($fields)
+]
 ];
 
-$context = stream_context_create($settings);
-$zapros = file_get_contents($url, false, $context);
-$JSdecode = json_decode($zapros, true);
+$context = stream_context_create ($paramsENT);
+$zaprosAdd = file_get_contents ($urlAdd, false,$context);
+$jsDecodeEnt = json_decode ($zaprosAdd);
 
-$title = $JSdecode["result"]["TITLE"];
-$pais = $JSdecode["result"]["UF_CRM_649AF1D374E3B"];
-$status = $JSdecode["result"]["STAGE_ID"];
+echo "<pre>";
+print_r ($jsDecodeEnt);
+echo "</pre>";
 
-// Заменяем ID страны на название
-switch ($pais) {
-    case 1729: $pais = "Аргентина"; break;
-    case 1731: $pais = "Испания"; break;
-    case 1733: $pais = "Колумбия"; break;
-    case 1735: $pais = "Мексика"; break;
-}
-
-// Заменяем статус
-switch ($status){
-    case 14: $status = "Стадия 1"; break;
-    case "NEW": $status = "Стадия 2"; break;
-    case "UC_UVTI2O": $status = "Стадия 3"; break;
-    case "PREPAYMENT_INVOICE": $status = "Стадия 4"; break;
-    case "EXECUTING": $status = "Стадия 5"; break;
-    case "FINAL_INVOICE": $status = "Стадия 6"; break;
-    case "WON": $status = "Сделка завершена успешно"; break;
-    case "LOSE": $status = "Сделка неуспешна, отказ"; break;
-}
-
-// Вывод
-echo "Название сделки: " . htmlspecialchars($title) . "<br>";
-echo "Страна: " . htmlspecialchars($pais) . "<br>";
-echo "Стадия сделки: " . htmlspecialchars($status) . "<br>";
 
 ?>
+
 
 
 

@@ -1,17 +1,18 @@
 
 <?php
 // Получаем данные на LaEmpresa
-$dealID = $_GET['deal_id'] ?? null; // ID сделки, которую будем передавать
+$leadID = $_GET['lead_id'] ?? null; // ID сделки, которую будем передавать
 $domain = "laempresa.bitrix24.es";  // домен твоего портала Bitrix24
 $webhook = "1/l0fvjh738yy1v0qk";    // часть вебхука (ключ авторизации)
 
 
-$urlGet = "https://{$domain}/rest/{$webhook}/crm.deal.get.json?id={$dealID}";
+$urlGet = "https://{$domain}/rest/{$webhook}/crm.lead.get.json?id={$leadID}";
 
 $zaprosGet = file_get_contents($urlGet);
 $jsonDecodeGet = json_decode ($zaprosGet, true);
 
 $title = $jsonDecodeGet ["result"]["TITLE"];
+/*
 $pais = $jsonDecodeGet ["result"]["UF_CRM_649AF1D374E3B"];
 
 // Меняем ID значений поля в Свич
@@ -32,6 +33,8 @@ switch ($pais){
 	$pais = 95;
 	break;
 }
+*/
+
 //Использеум данные в enterprise
 
 $domainENT = "enterprisesubscription.bitrix24.com";  // домен твоего портала Bitrix24
@@ -40,11 +43,10 @@ $webhookENT = "17/ej33x1qpsr6kxpry";    // часть вебхука (ключ �
 $fields = [
 "fields" => [
   "TITLE" => $title,
-  "UF_CRM_68FB3DBAC1C09" => $pais
-]
+  ]
 ];
 
-$urlAdd = "https://{$domainENT}/rest/{$webhookENT}/crm.deal.add.json";
+$urlAdd = "https://{$domainENT}/rest/{$webhookENT}/crm.lead.add.json";
 
 $paramsENT = [
 "http" =>[
@@ -63,6 +65,7 @@ print_r ($jsDecodeEnt);
 echo "</pre>";
 
 ?>
+
 
 
 

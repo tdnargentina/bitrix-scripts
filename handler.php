@@ -1,70 +1,46 @@
 
 <?php
-// Получаем данные на LaEmpresa
-$leadID = $_GET['lead_id'] ?? null; // ID сделки, которую будем передавать
-$domain = "laempresa.bitrix24.es";  // домен твоего портала Bitrix24
-$webhook = "1/l0fvjh738yy1v0qk";    // часть вебхука (ключ авторизации)
 
+// В случае выигрыша код передает название Лида, Почту и Списочную страну с одного аккаунта на другой
+// В финальной стадии лидов первого аккаунта необходимо указать обработчик и лид https://bitrix-scripts.onrender.com?lead_id={{ID}}
 
-$urlGet = "https://{$domain}/rest/{$webhook}/crm.lead.get.json?id={$leadID}";
+$leadID = $_GET['lead_id'] ?? null;
 
-$zaprosGet = file_get_contents($urlGet);
-$jsonDecodeGet = json_decode ($zaprosGet, true);
+$leadGet = "https://laempresa.bitrix24.es/rest/1/l0fvjh738yy1v0qk/crm.lead.get.json?"
+. "id=" . urlencode($leadID);
 
-$title = $jsonDecodeGet ["result"]["TITLE"];
-/*
-$pais = $jsonDecodeGet ["result"]["UF_CRM_649AF1D374E3B"];
+$leadgetRun = file_get_contents ($leadGet);
+$jsDataLead = json_decode ($leadgetRun,true);
+$country = $jsDataLead["result"]["UF_CRM_1687251842328"]; // получили значение страны
+$title = $jsDataLead["result"]["TITLE"]; // получили название лида
+$mail = $jsDataLead ["result"]["EMAIL"][0]["VALUE"]; // получаем рабочую почту
 
-// Меняем ID значений поля в Свич
-switch ($pais){
-	case 1729:
-	$pais = 89;
+// в switch меняем id значение полей чтобы в новомм аккаунте появилось нужное значение 
+switch($country){
+	case 1721:
+	$country = 57;
 	break;
-	
-	case 1731:
-	$pais = 91;
+	case 1723:
+	$country =  59;
 	break;
-	
-	case 1733:
-	$pais = 93;
+	case 1725:
+	$country =  61;
 	break;
-	
-	case 1735:
-	$pais = 95;
+	case 1727:
+	$country =  63;
 	break;
 }
-*/
 
-//Использеум данные в enterprise
 
-$domainENT = "enterprisesubscription.bitrix24.com";  // домен твоего портала Bitrix24
-$webhookENT = "17/ej33x1qpsr6kxpry";    // часть вебхука (ключ авторизации)
 
-$fields = [
-"fields" => [
-  "TITLE" => $title,
-  ]
-];
+$urlleadCreate = "https://enterprisesubscription.bitrix24.com/rest/17/ej33x1qpsr6kxpry/crm.lead.add.json?"
+. "fields[TITLE]=". urlencode($title) // передали название
+. "&fields[UF_CRM_1754813532364]=" . urlencode($country) // передали id значение страны которое отобразится как старна в поле
+. "&fields[EMAIL][0][VALUE]=" .urlencode ($mail); // передали рабочую почту
 
-$urlAdd = "https://{$domainENT}/rest/{$webhookENT}/crm.lead.add.json";
-
-$paramsENT = [
-"http" =>[
-"method" => "POST",
-"header"=> "Content-Type: application/x-www-form-urlencoded",
-"content" => http_build_query ($fields)
-]
-];
-
-$context = stream_context_create ($paramsENT);
-$zaprosAdd = file_get_contents ($urlAdd, false,$context);
-$jsDecodeEnt = json_decode ($zaprosAdd);
-
-echo "<pre>";
-print_r ($jsDecodeEnt);
-echo "</pre>";
-
+file_get_contents ($urlleadCreate);
 ?>
+
 
 
 

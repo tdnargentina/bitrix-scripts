@@ -1,29 +1,28 @@
 <?php
 
-// Читаем входящий JSON от Bitrix24
+
+// Читаем JSON от Bitrix
 $input = file_get_contents("php://input");
 $data = json_decode($input, true);
 
-// Получаем ID созданного SPA
+// Достаём ID нового SPA
 $spaId = $data["data"]["FIELDS"]["ID"] ?? null;
 
 if (!$spaId) {
-    file_put_contents("log.txt", "Ошибка: нет ID\n".$input);
-    exit("No SPA ID");
+    echo "No SPA ID received";
+    exit;
 }
 
-// Настройки Bitrix24
+// ---- Настройки Bitrix ----
 $domain = "laempresa.bitrix24.es";
 $webhook = "1/hloshe3nj97bypps";
-
-// ID сделки, которую нужно обновить (если он статичен)
 $dealID = 2453;
 
-// Поля для обновления
+// ---- Обновляем сделку ----
 $fields = [
+    "TITLE" => (string)$spaId,
     "UF_CRM_646374B11172B" => 1,
-    "TITLE" => "SPA #" . $spaId, // Например
-    "UF_CRM_649AF1D374E3B" => 1735,
+    "UF_CRM_649AF1D374E3B" => 1735
 ];
 
 $postData = [
@@ -44,20 +43,12 @@ $options = [
 $context = stream_context_create($options);
 $result = file_get_contents($url, false, $context);
 
-$response = json_decode($result, true);
+// Выводим ответ Bitrix (для проверки)
+echo $result;
 
-// ЛОГ (для дебага)
-file_put_contents("log.txt", print_r([
-    "input" => $data,
-    "sent" => $postData,
-    "response" => $response
-], true));
-
-echo "<pre>";
-print_r($response);
-echo "</pre>";
 
 ?>
+
 
 
 

@@ -1,54 +1,52 @@
 <?php
 
-// Bitrix шлёт данные как обычную форму — читаем $_POST
-$spaId = $_POST['data']['FIELDS']['ID'] ?? null;
-
-if (!$spaId) {
-    error_log("ERROR: SPA ID not found. POST: " . print_r($_POST, true));
-    echo "NO SPA ID";
-    exit;
-}
+// При создании СПА запускается обработчки который меняет ответсвенного в этом СПА
 
 // ---- Настройки Bitrix ----
 $domain = "laempresa.bitrix24.es";
 $webhook = "1/hloshe3nj97bypps";
-$dealID = 2453;
 
-// ---- Обновляем сделку ----
+// Bitrix шлёт данные как обычную форму — читаем $_POST и получаем:
+$spaId = $_POST["data"]["FIELDS"]["ID"]; // Получаем ID созданного элемента
+$entityTypeId = $_POST["data"]["FIELDS"]["ENTITY_TYPE_ID"];// Идентификатор раздела SPA
+
+// Указываем данные для изменения 
+$title = "SPA с новым ответственным REST API"; // указываем название элемента
+$responsible = 6; //указываем ответсвенного
+
+// Передаем изменения в переменные Битрикс
+
 $fields = [
-    "TITLE" => (string)$spaId,
-    "UF_CRM_646374B11172B" => 1,
-    "UF_CRM_649AF1D374E3B" => 1735
+"title" => $title,
+"assignedById" => $responsible
 ];
 
-$postData = [
-    "id" => $dealID,
-    "fields" => $fields
+// Оборачиваем настройки для Битрикс
+
+$params = [
+"entityTypeId" => $entityTypeId,
+"id" => $spaId,
+"fields" => $fields
 ];
 
-$url = "https://{$domain}/rest/{$webhook}/crm.deal.update.json";
 
-$options = [
-    "http" => [
-        "method"  => "POST",
-        "header"  => "Content-Type: application/x-www-form-urlencoded",
-        "content" => http_build_query($postData)
-    ]
+// Пишем URL c нужным методом
+$url = "https://{$domain}/rest/{$webhook}/crm.item.update.json";
+
+// Собираем запрос
+
+$settings = [
+"http" => [
+"method" => "POST",
+"header" => "Content-Type: application/x-www-form-urlencoded",
+"content" => http_build_query ($params)
+]
 ];
 
-$context = stream_context_create($options);
-$result = file_get_contents($url, false, $context);
+// Создаем упаковку настроек
+$context = stream_context_create ($settings);
 
-// Логируем ответ
-error_log("Bitrix update response: " . $result);
-
-// Отдаём назад
-echo $result;
+// Запускаем
+$zapusk = file_get_contents ($url, false, $context);
 
 ?>
-
-
-
-
-
-

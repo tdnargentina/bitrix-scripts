@@ -1,52 +1,58 @@
 <?php
 
-// При создании СПА запускается обработчки который меняет ответсвенного в этом СПА
+// -------------------------------------------------------
+// Обработчик вызывается при создании элемента смарт-процесса (SPA).
+// Его задача — изменить ответственного и название созданного элемента.
+// -------------------------------------------------------
 
-// ---- Настройки Bitrix ----
-$domain = "laempresa.bitrix24.es";
-$webhook = "1/hloshe3nj97bypps";
+// ---- 1. Настройки подключения к Bitrix24 ----
+$domain = "laempresa.bitrix24.es";         // Домен портала Bitrix24
+$webhook = "1/hloshe3nj97bypps";           // Ключ вебхука (аутентификация)
 
-// Bitrix шлёт данные как обычную форму — читаем $_POST и получаем:
-$spaId = $_POST["data"]["FIELDS"]["ID"]; // Получаем ID созданного элемента
-$entityTypeId = $_POST["data"]["FIELDS"]["ENTITY_TYPE_ID"];// Идентификатор раздела SPA
+// ---- 2. Получение данных, которые передал Bitrix24 ----
+// Bitrix при событии onCrmDynamicItemAdd отправляет form-data, поэтому читаем $_POST.
+$spaId = $_POST["data"]["FIELDS"]["ID"];               // ID созданного элемента SPA
+$entityTypeId = $_POST["data"]["FIELDS"]["ENTITY_TYPE_ID"]; // Тип сущности SPA (entityTypeId)
 
-// Указываем данные для изменения 
-$title = "SPA с новым ответственным REST API"; // указываем название элемента
-$responsible = 6; //указываем ответсвенного
+// ---- 3. Формируем данные, которые хотим изменить у элемента SPA ----
+$title = "SPA с новым ответственным REST API";   // Новое название элемента
+$responsible = 6;                                 // Новый ответственный (ID пользователя)
 
-// Передаем изменения в переменные Битрикс
-
+// Поля, которые будем обновлять в элементе
 $fields = [
-"title" => $title,
-"assignedById" => $responsible
+    "title" => $title,             // Поле TITLE в smart-процессах — camelCase
+    "assignedById" => $responsible // Назначение ответственного
 ];
 
-// Оборачиваем настройки для Битрикс
-
+// ---- 4. Формируем параметры запроса для метода crm.item.update ----
 $params = [
-"entityTypeId" => $entityTypeId,
-"id" => $spaId,
-"fields" => $fields
+    "entityTypeId" => $entityTypeId, // Тип смарт-процесса
+    "id" => $spaId,                   // ID элемента
+    "fields" => $fields               // Какие поля обновляем
 ];
 
-
-// Пишем URL c нужным методом
+// ---- 5. Готовим URL к REST API Bitrix24 ----
 $url = "https://{$domain}/rest/{$webhook}/crm.item.update.json";
 
-// Собираем запрос
-
+// ---- 6. Подготовка HTTP-запроса ----
+// Bitrix ожидает данные в формате x-www-form-urlencoded, используем http_build_query.
 $settings = [
-"http" => [
-"method" => "POST",
-"header" => "Content-Type: application/x-www-form-urlencoded",
-"content" => http_build_query ($params)
-]
+    "http" => [
+        "method"  => "POST",                                // Метод запроса
+        "header"  => "Content-Type: application/x-www-form-urlencoded",
+        "content" => http_build_query($params)              // Тело запроса
+    ]
 ];
 
-// Создаем упаковку настроек
-$context = stream_context_create ($settings);
+// ---- 7. Создаем контекст HTTP-запроса ----
+$context = stream_context_create($settings);
 
-// Запускаем
-$zapusk = file_get_contents ($url, false, $context);
+// ---- 8. Отправляем запрос в Bitrix24 ----
+$zapusk = file_get_contents($url, false, $context);
+
+// (по желанию) можно залогировать ответ:
+// error_log("RESPONSE: " . $zapusk);
 
 ?>
+
+

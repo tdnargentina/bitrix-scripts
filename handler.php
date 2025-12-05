@@ -4,51 +4,53 @@
 $domain = "laempresa.bitrix24.es";
 $webhook = "1/hloshe3nj97bypps";
 
-$spaENTITY_TYPE_ID = $_POST["data"]["FIELDS"]["ENTITY_TYPE_ID"];
-$spaID = $_POST["data"]["FIELDS"]["ID"];
+$DEALId = $_POST["data"]["FIELDS"]["ID"];  
 
-$urlGet = "https://{$domain}/rest/{$webhook}/crm.item.get.json?entityTypeId={$spaENTITY_TYPE_ID}&id={$spaID}";
-
+$urlGet = "https://{$domain}/rest/{$webhook}/crm.deal.get.json?id={$DEALId}";
 $zapuskGet = file_get_contents($urlGet);
-$getDecode = json_decode ($zapuskGet, true);
-$employeeID = $getDecode["result"]["item"]["ufCrm19_1723554092730"]; 
+$getdecode = json_decode($zapuskGet, true);
 
-if (!isset($getDecode["result"]["item"]["ufCrm19_1723554092730"])) {
-    die("Employee ID not found in response");
+
+$fieldData = $getdecode["result"]["UF_CRM_1738841842511"];
+
+if(!isset($fieldData["result"]["UF_CRM_1738841842511"])) {
+	die ("ошибка");
 }
 
-$newID = [
-  1  => 1,
-  6  => 6,
-  29 => 29
+
+$massivOtv = [
+    1  => 1,
+    6  => 6,
+    29 => 29
 ];
 
-$responsible = $newID[$employeeID];
+$responsible = $massivOtv[$fieldData];
 
 $fields = [
-"title"=> "SPA REST 05/12",
-"assignedById" => $responsible
+"TITLE"=> "Сделка из обработчика id=$DEALId",
+"ASSIGNED_BY_ID" =>$responsible 
 ];
 
-$params = [
-"entityTypeId" => $spaENTITY_TYPE_ID,
-"id" => $spaID,
-"fields"=> $fields
+$params24 = [
+"id" => $DEALId,
+"fields" => $fields
 ];
 
-$urlUpdate = "https://{$domain}/rest/{$webhook}/crm.item.update.json";
+$urlUpd = "https://{$domain}/rest/{$webhook}/crm.deal.update.json";
 
 $settings = [
-"http"=>[
-"method"=> "POST",
+"http" => [
+"method" => "POST",
 "header" => "Content-Type: application/x-www-form-urlencoded",
-"content" => http_build_query ($params)
+"content" => http_build_query ($params24)
 ]
 ];
 
-$contextUPAKOVKA = stream_context_create ($settings);
-$zapuskUpd = file_get_contents ($urlUpdate,false,$contextUPAKOVKA);
+$upakovka = stream_context_create ($settings);
+$zapusk = file_get_contents ($urlUpd, false,$upakovka);
 
 ?>
+
+
 
 

@@ -13,10 +13,6 @@ $getdecode = json_decode($zapuskGet, true);
 
 $fieldData = $getdecode["result"]["UF_CRM_1738841842511"];
 
-if(!isset($fieldData["result"]["UF_CRM_1738841842511"])) {
-	die ("ошибка");
-}
-
 
 $massivOtv = [
     1  => 1,
@@ -50,6 +46,7 @@ $upakovka = stream_context_create ($settings);
 $zapusk = file_get_contents ($urlUpd, false,$upakovka);
 
 ?>
+
 
 
 

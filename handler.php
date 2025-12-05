@@ -1,84 +1,54 @@
 <?php
-/*
-В исходящий вебхук необходимо поставить событие onCrmDynamicItemAdd
-В методе нужно указать crm.item.update
-Документация:
-https://apidocs.bitrix24.ru/api-reference/crm/universal/events/on-crm-dynamic-item-add.html
-https://apidocs.bitrix24.ru/api-reference/crm/universal/crm-item-update.html
-Обработчик вызывается при создании элемента смарт-процесса (SPA).
-Его задача — изменить ответственного и название созданного элемента.
-*/
-// ---- 1. Настройки подключения к Bitrix24 ----
-$domain = "laempresa.bitrix24.es";         // Домен портала Bitrix24
-$webhook = "1/hloshe3nj97bypps";           // Ключ вебхука (аутентификация)
 
-// ---- 2. Получение данных, которые передал Bitrix24 ----
-// Bitrix при событии onCrmDynamicItemAdd отправляет form-data, поэтому читаем $_POST.
-$spaId = $_POST["data"]["FIELDS"]["ID"];               // ID созданного элемента SPA
-$entityTypeId = $_POST["data"]["FIELDS"]["ENTITY_TYPE_ID"]; // Тип сущности SPA (entityTypeId)
+// СТАВИМ onCrmDynamicItemAdd в исходящий вебхук и указаываем адрес обработчика 
+$domain = "laempresa.bitrix24.es";
+$webhook = "1/hloshe3nj97bypps";
 
+$spaENTITY_TYPE_ID = $_POST["data"]["FIELDS"]["ENTITY_TYPE_ID"];
+$spaID = $_POST["data"]["FIELDS"]["ID"];
 
-// получаем поля созданного элемента
+$urlGet = "https://{$domain}/rest/{$webhook}/crm.item.get.json?entityTypeId={$spaENTITY_TYPE_ID}&id={$spaID}";
 
-$urlGet = "https://{$domain}/rest/{$webhook}/crm.item.get.json?entityTypeId={$entityTypeId}&id={$spaId}";
-
-$zapuskGet = file_get_contents ($urlGet);
+$zapuskGet = file_get_contents($urlGet);
 $getDecode = json_decode ($zapuskGet, true);
-$string = $getDecode["result"]["item"]["ufCrm19_1723554092730"]; // данные по id сотрудника
+$employeeID = $getDecode["result"]["item"]["ufCrm19_1723554092730"]; 
 
-
-// ---- 3. Формируем данные, которые хотим изменить у элемента SPA ----
-$title = "SPA с новым ответственным REST API";   // Новое название элемента
-$responsible = null;                                // Новый ответственный (ID пользователя)
-
-switch ($string) {
-	case 1:
-	$responsible = 1;
-	break;
-	case 6:
-	$responsible = 6;
-	break;
-	case 29:
-	$responsible = 29;
-	break;
+if (!isset($getDecode["result"]["item"]["ufCrm19_1723554092730"])) {
+    die("Employee ID not found in response");
 }
 
+$newID = [
+  1  => 1,
+  6  => 6,
+  29 => 29
+];
 
-// Поля, которые будем обновлять в элементе
+$responsible = $newID[$employeeID];
+
 $fields = [
-    "title" => $title,             // Поле TITLE в smart-процессах — camelCase
-    "assignedById" => $responsible // Назначение ответственного
+"title"=> "SPA REST 05/12",
+"assignedById" => $responsible
 ];
 
-// ---- 4. Формируем параметры запроса для метода crm.item.update ----
 $params = [
-    "entityTypeId" => $entityTypeId, // Тип смарт-процесса
-    "id" => $spaId,                   // ID элемента
-    "fields" => $fields               // Какие поля обновляем
+"entityTypeId" => $spaENTITY_TYPE_ID,
+"id" => $spaID,
+"fields"=> $fields
 ];
 
-// ---- 5. Готовим URL к REST API Bitrix24 ----
-$url = "https://{$domain}/rest/{$webhook}/crm.item.update.json";
+$urlUpdate = "https://{$domain}/rest/{$webhook}/crm.item.update.json";
 
-// ---- 6. Подготовка HTTP-запроса ----
-// Bitrix ожидает данные в формате x-www-form-urlencoded, используем http_build_query.
 $settings = [
-    "http" => [
-        "method"  => "POST",                                // Метод запроса
-        "header"  => "Content-Type: application/x-www-form-urlencoded",
-        "content" => http_build_query($params)              // Тело запроса
-    ]
+"http"=>[
+"method"=> "POST",
+"header" => "Content-Type: application/x-www-form-urlencoded",
+"content" => http_build_query ($params)
+]
 ];
 
-// ---- 7. Создаем контекст HTTP-запроса ----
-$context = stream_context_create($settings);
-
-// ---- 8. Отправляем запрос в Bitrix24 ----
-$zapusk = file_get_contents($url, false, $context);
-
-
-
-//"UF_CRM_19_1723554092730"
+$contextUPAKOVKA = stream_context_create ($settings);
+$zapuskUpd = file_get_contents ($urlUpdate,false,$contextUPAKOVKA);
 
 ?>
+
 

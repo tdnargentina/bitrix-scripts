@@ -3,19 +3,13 @@
 $domain  = 'laempresa.bitrix24.es';
 $webhook = '1/hloshe3nj97bypps';
 
-// Проверяем, что запрос пришёл от БП
-if (!isset($_POST['document_id'][2])) {
-    die('No deal ID');
-}
+// ID сделки из БП
+$dealID = 2517;
 
-$dealID = $_POST['document_id'][2];
+// ТОЛЬКО ВРЕМЯ
+$timeOnly = date('H:i:s'); // или 'H:i'
 
-// Часовой пояс (важно!)
-date_default_timezone_set('Europe/Moscow');
-
-// Только время
-$timeOnly = date('H:i:s');
-
+// Поля сделки
 $fields = [
     'UF_CRM_1738841842511' => $timeOnly
 ];
@@ -39,8 +33,14 @@ $context = stream_context_create($settings);
 $response = file_get_contents($url, false, $context);
 $result = json_decode($response, true);
 
+// Отладка
+echo "<pre>";
+print_r($result);
+echo "</pre>";
+
 
 ?>
+
 
 
 

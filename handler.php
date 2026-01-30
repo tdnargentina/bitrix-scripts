@@ -1,4 +1,3 @@
-
 <?php
 
 $domain  = 'laempresa.bitrix24.es';
@@ -26,7 +25,7 @@ $settingsPHP = [
 
 
 $upakovka = stream_context_create($settingsPHP);
-$zapusk = file_get_contents($url,false,$upakovka);
+$zapusk = file_get_contents($url1,false,$upakovka);
 
 
 
@@ -36,7 +35,7 @@ $zapusk = file_get_contents($url,false,$upakovka);
 $dealID = $_POST["data"]["FIELDS"]["ID"];    
 
 // ТОЛЬКО ВРЕМЯ
-$time = time('H:i:s'); // или 'H:i'
+$time = date('H:i:s');
 
 // Поля сделки
 $fields = [
@@ -70,6 +69,8 @@ echo "</pre>";
 
 
 ?>
+
+
 
 
 

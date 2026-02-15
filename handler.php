@@ -34,7 +34,7 @@ $paramsToSend =[
 $context = stream_context_create ($paramsToSend);
 
 
-file_put_contents ($dealURL,false,$context);
+file_get_contents ($dealURL,false,$context);
 }
 
 ?>

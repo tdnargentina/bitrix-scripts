@@ -27,8 +27,6 @@ if ($_REQUEST['event'] == 'ONIMBOTMESSAGEADD')
 	if (!isset($appsConfig[$_REQUEST['auth']['application_token']]))
 		return false;
 
-	if ($_REQUEST['data']['PARAMS']['CHAT_ENTITY_TYPE'] != 'LINES')
-		return false;
 
 	itrRun($_REQUEST['auth']['application_token'], $_REQUEST['data']['PARAMS']['DIALOG_ID'], $_REQUEST['data']['PARAMS']['FROM_USER_ID'], $_REQUEST['data']['PARAMS']['MESSAGE']);
 }
@@ -699,7 +697,3 @@ class ItrItem
 		);
 	}
 }
-
-
-
-

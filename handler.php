@@ -3,7 +3,7 @@
 $domain  = 'aaavito.bitrix24.ru';
 $webhook = '1/nthi0g5a4kz8biro';
 
-$lead_ID = $_GET['lead_id'] ?? null;
+$lead_ID = $_REQUEST['data']['FIELDS']['ID'] ?? null;
 
 $urlGET = "https://{$domain}/rest/{$webhook}/crm.lead.update.json";
 

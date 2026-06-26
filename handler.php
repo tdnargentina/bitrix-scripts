@@ -35,8 +35,8 @@ $country = $jsDecode ['result']['UF_CRM_1772618596431'];
 
 // РАБОТА СО ВТОРЫМ АККАУНТОМ
 
-if (!$stage == 'JUNK') {
-	die;
+if ($stage !== 'JUNK') {
+    die;
 }
 $domain2  = 'laempresa.bitrix24.es';
 $webhook2 = '1/hloshe3nj97bypps';
@@ -54,7 +54,7 @@ $Newresp = $respChange[$responsibleID] ?? null;
 $countryChange = [
     64  => 2663, // Аргентина
     62 => 2665, // Мексика
-    66 => 2667 // Колумбия
+    66 => 2667, // Колумбия
 	60 => 2669 // Испания
 ];
 

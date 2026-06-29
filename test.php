@@ -1,6 +1,9 @@
 <?php
 
-echo '<pre>';
+require 'rest.php';
 
-echo file_get_contents(__DIR__.'/auth.json');
+$result = callRest('user.current');
+
+echo '<pre>';
+print_r($result);
 ?>
